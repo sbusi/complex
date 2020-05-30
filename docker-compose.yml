@@ -1,6 +1,16 @@
 version: "3"
 
 services:
+  nginx:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./nginx
+    ports:
+      - '3050:80'
+    depends_on:
+      - server
+      - client
   postgres:
     image: "postgres:latest"
     environment:
@@ -32,10 +42,11 @@ services:
     volumes:
       - /app/node_modules
       - ./client:/app
+    stdin_open: true
   worker:
     build:
       dockerfile: Dockerfile.dev
       context: ./worker
     volumes:
       - /app/node_modules
-      - ./client:/app
+      - ./worker:/app
