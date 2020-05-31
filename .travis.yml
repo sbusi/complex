@@ -8,6 +8,19 @@ before_install:
 script:
   - docker run -e CI=true skbusi/react-test npm run test -- --coverage
 
+after_success:
+  - docker build -t skbusi/multi-client ./client
+  - docker build -t skbusi/multi-worker ./worker
+  - docker build -t skbusi/multi-server ./server
+  - docker build -t skbusi/multi-nginx ./nginx
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push skbusi/multi-client
+  - docker push skbusi/multi-worker
+  - docker push skbusi/multi-ngnix
+  - docker push skbusi/multi-server
+
+
+
 #deploy:
 #  provider: elasticbeanstalk
 #  region: "us-west-2"
